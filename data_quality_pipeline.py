@@ -1,36 +1,44 @@
-import pandas as pd
-import numpy as np
+# Automated Data Quality & Error Detection for Field Survey Data
 
-def load_data(path):
-    return pd.read_csv(path)
+## Overview
+This project implements a Python-based pipeline for validating and analyzing
+field-collected survey data. It focuses on identifying inconsistencies, outliers,
+and error patterns common in real-world data collection environments.
 
-def basic_quality_checks(df):
-    report = {}
-    report["rows"] = len(df)
-    report["missing_values"] = df.isnull().sum().to_dict()
-    report["duplicate_rows"] = df.duplicated().sum()
-    return report
+The motivation is to improve dataset reliability before downstream analysis,
+modeling, or decision-making.
 
-def detect_outliers(df, column):
-    q1 = df[column].quantile(0.25)
-    q3 = df[column].quantile(0.75)
-    iqr = q3 - q1
-    outliers = df[(df[column] < q1 - 1.5 * iqr) | (df[column] > q3 + 1.5 * iqr)]
-    return outliers
+## Problem Context
+Field data often contains:
+- Missing or inconsistent values
+- Enumerator-induced errors
+- Logical contradictions
+- Noisy measurements
 
-def clean_data(df):
-    df = df.drop_duplicates()
-    df = df.dropna()
-    return df
+These issues mirror challenges in dataset construction and evaluation for
+machine learning systems.
 
-if __name__ == "__main__":
-    data = load_data("sample_survey.csv")
-    report = basic_quality_checks(data)
-    print("DATA QUALITY REPORT:", report)
+## Approach
+The pipeline:
+1. Ingests CSV/JSON survey data
+2. Performs schema and constraint checks
+3. Detects outliers and logical inconsistencies
+4. Generates summary statistics and data quality reports
+5. Outputs a cleaned dataset for analysis
 
-    if "load_kw" in data.columns:
-        outliers = detect_outliers(data, "load_kw")
-        print(f"Detected {len(outliers)} outliers")
+## Tools & Libraries
+- Python
+- pandas
+- numpy
+- matplotlib
 
-    cleaned = clean_data(data)
-    cleaned.to_csv("cleaned_data.csv", index=False)
+## Key Concepts Demonstrated
+- Data validation and cleaning
+- Error analysis
+- Ground-truth reasoning
+- Iterative data improvement
+
+## Future Extensions
+- Human-in-the-loop error correction
+- Dataset versioning
+- Integration with ML evaluation pipelines
